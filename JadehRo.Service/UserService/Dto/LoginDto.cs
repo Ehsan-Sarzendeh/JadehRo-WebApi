@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using JadehRo.Database.Entities.Users;
 
 namespace JadehRo.Service.UserService.Dto;
 

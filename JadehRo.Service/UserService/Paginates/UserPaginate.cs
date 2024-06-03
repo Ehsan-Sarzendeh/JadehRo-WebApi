@@ -1,4 +1,7 @@
 ﻿using System.ComponentModel;
+using JadehRo.Common.Utilities;
+using JadehRo.Database.Entities.Users;
+using Microsoft.EntityFrameworkCore;
 
 namespace JadehRo.Service.UserService.Paginates;
 
@@ -31,21 +34,21 @@ public class UserPaginate : Paginate
 
             count = models.Count();
 
-            if (string.IsNullOrEmpty(paginate.sort))
+            if (string.IsNullOrEmpty(paginate.Sort))
                 models = models.OrderByDescending(x => x.FullName);
             else
             {
-                var prop = TypeDescriptor.GetProperties(typeof(User)).Find(paginate.sort, true);
-                models = paginate.order.ToLower() == "asc"
+                var prop = TypeDescriptor.GetProperties(typeof(User)).Find(paginate.Sort, true);
+                models = paginate.Order.ToLower() == "asc"
                     ? models.OrderBy(x => EF.Property<User>(x, prop.Name))
                     : models.OrderByDescending(x => EF.Property<User>(x, prop.Name));
             }
 
-            if (paginate.count != 0)
+            if (paginate.Count != 0)
             {
                 models = models
-                    .Skip(paginate.count * paginate.index)
-                    .Take(paginate.count);
+                    .Skip(paginate.Count * paginate.Index)
+                    .Take(paginate.Count);
             }
             else
             {

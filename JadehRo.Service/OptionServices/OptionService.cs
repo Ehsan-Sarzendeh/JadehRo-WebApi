@@ -1,4 +1,6 @@
-﻿using JadehRo.Service.OptionServices.Dto;
+﻿using AutoMapper;
+using JadehRo.Database.Repositories.RepositoryWrapper;
+using JadehRo.Service.OptionServices.Dto;
 
 namespace JadehRo.Service.OptionServices;
 
@@ -12,6 +14,7 @@ public class OptionService : IOptionService
         _repository = repository;
         _mapper = mapper;
     }
+
     public void EditOption(OptionDto dto)
     {
             
@@ -20,7 +23,6 @@ public class OptionService : IOptionService
     public OptionDto GetOption()
     {
         var options = _repository.Option.TableNoTracking
-            .Where(wh => wh.IsActive)
             .ToList();
 
         var optionDto = OptionDto.FromListEntity(_mapper, options);

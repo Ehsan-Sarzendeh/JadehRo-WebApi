@@ -1,4 +1,6 @@
-﻿namespace JadehRo.Service.UserService.Dto;
+﻿using JadehRo.Common.Validators;
+
+namespace JadehRo.Service.UserService.Dto;
 
 public class ChangePhoneNumberDto
 {

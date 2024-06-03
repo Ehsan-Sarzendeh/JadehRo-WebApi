@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using JadehRo.Api.Infrastructure.Api;
+using JadehRo.Service.CommonService;
+using JadehRo.Service.CommonService.Dto;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JadehRo.Api.Controllers;
 
-[Authorize]
 public class CommonController : BaseController
 {
     private readonly ICommonService _commonService;

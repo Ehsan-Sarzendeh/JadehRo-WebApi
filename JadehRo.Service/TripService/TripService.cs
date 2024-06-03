@@ -1,5 +1,10 @@
-﻿using JadehRo.Service.TripService.Dto;
+﻿using AutoMapper;
+using JadehRo.Common.Exceptions;
+using JadehRo.Database.Entities.Trip;
+using JadehRo.Database.Repositories.RepositoryWrapper;
+using JadehRo.Service.TripService.Dto;
 using JadehRo.Service.TripService.Paginates;
+using Microsoft.EntityFrameworkCore;
 
 namespace JadehRo.Service.TripService;
 
@@ -31,7 +36,8 @@ public class TripService : ITripService
             throw new BadRequestException("تاریخ حرکت صحیح نمی باشد");
 
         var trip = dto.ToEntity(_mapper);
-        trip.Status = TripStatus.Accept;
+
+        trip.Status = TripStatus.Pending;
         _repository.Trip.Add(trip, true);
     }
 
@@ -42,28 +48,14 @@ public class TripService : ITripService
         _repository.Trip.Update(trip, true);
     }
 
-    public void DeleteTrip(long userId, long tripId)
+    public void CancelTrip(long userId, long tripId)
     {
         var trip = _repository.Trip.Table.Single(x => x.Id == tripId);
 
         if (userId != trip.CreatedUserId)
             throw new BadRequestException("درخواست نامعتبر");
 
-        trip.Status = TripStatus.Delete;
-        _repository.Save();
-    }
-
-    public void AcceptTrip(long tripId)
-    {
-        var trip = _repository.Trip.Table.Single(x => x.Id == tripId);
-        trip.Status = TripStatus.Accept;
-        _repository.Save();
-    }
-
-    public void RejectTrip(long tripId)
-    {
-        var trip = _repository.Trip.Table.Single(x => x.Id == tripId);
-        trip.Status = TripStatus.Reject;
+        trip.Status = TripStatus.Cancel;
         _repository.Save();
     }
 
@@ -81,13 +73,13 @@ public class TripService : ITripService
         return (result, count);
     }
 
-    public (IList<GetTripListDto>, int) GetAcceptedTrips(TripPaginate paginate)
+    public (IList<GetTripListDto>, int) GetPendingTrips(TripPaginate paginate)
     {
         var trips = _repository.Trip.TableNoTracking
             .Include(x => x.Source)
             .Include(x => x.Destination)
             .Include(x => x.CarBrand)
-            .Where(x => x.Status == TripStatus.Accept && x.MoveDateTime.Date >= DateTime.Now.Date);
+            .Where(x => x.Status == TripStatus.Pending && x.MoveDateTime.Date >= DateTime.Now.Date);
 
         (trips, var count) = TripPaginate.GetPaginatedList(paginate, trips, _mapper);
 
@@ -101,7 +93,7 @@ public class TripService : ITripService
             .Include(x => x.Source)
             .Include(x => x.Destination)
             .Include(x => x.CarBrand)
-            .Where(x => x.CreatedUserId == driverId && x.Status != TripStatus.Delete);
+            .Where(x => x.CreatedUserId == driverId);
 
         (trips, var count) = TripPaginate.GetPaginatedList(paginate, trips, _mapper);
 
@@ -121,7 +113,7 @@ public class TripService : ITripService
         return result;
     }
 
-    public DriverInfo GetTripDriverInfo(long userId, long tripId)
+    public DriverInfo SeenInfo(long userId, long tripId)
     {
         var trip = _repository.Trip.Table
             .Include(x => x.CreatedUser)
@@ -133,9 +125,7 @@ public class TripService : ITripService
             FullName = trip.CreatedUser.FullName,
         };
 
-        trip.ReadCount++;
-
-        var tripReq = new TripReq()
+        var tripReq = new TripReq
         {
             TripId = trip.Id,
             UserId = userId,
@@ -147,5 +137,83 @@ public class TripService : ITripService
         _repository.Save();
 
         return driverInfo;
+    }
+
+    public void SendRequest(long userId, long tripId)
+    {
+        var trip = _repository.Trip.TableNoTracking
+            .Single(x => x.Id == tripId);
+
+        if (trip.Status != TripStatus.Pending)
+            throw new BadRequestException();
+
+        if (trip.RemainingCapacity == 0)
+            throw new BadRequestException("ظرفیت سفر تکمیل شده است");
+
+        var existReq = _repository.TripReq.Table
+            .SingleOrDefault(x => x.UserId == userId && x.TripId == tripId);
+
+        if (existReq is not null)
+        {
+            switch (existReq.Status)
+            {
+                case TripReqStatus.Seen:
+                    existReq.Status = TripReqStatus.Pending;
+                    break;
+                case TripReqStatus.Pending:
+                case TripReqStatus.Accept:
+                case TripReqStatus.Reject:
+                    throw new BadRequestException("درخواست سفر قبلا ارسال شده است");
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+        else
+        {
+            var tripReq = new TripReq
+            {
+                TripId = tripId,
+                UserId = userId,
+                SeenDateTime = DateTime.Now,
+                Status = TripReqStatus.Pending,
+            };
+
+            _repository.TripReq.Add(tripReq);
+        }
+
+        _repository.Save();
+    }
+    public void AcceptRequest(long tripReqId)
+    {
+        var tripReq = _repository.TripReq.Table
+            .Include(x => x.Trip)
+            .Single(x => x.Id == tripReqId);
+
+        if (tripReq.Status != TripReqStatus.Pending)
+            throw new BadRequestException();
+
+        var acceptCount = _repository.TripReq.TableNoTracking
+            .Count(x => x.TripId == tripReq.TripId && x.Status == TripReqStatus.Accept);
+
+        if (tripReq.Trip.Capacity == acceptCount)
+            throw new AppException("ظرفیت سفر به اتمام رسیده است");
+
+        tripReq.Status = TripReqStatus.Accept;
+        tripReq.Trip.FillCapacity++;
+
+        if (tripReq.Trip.RemainingCapacity == 0)
+            tripReq.Trip.Status = TripStatus.Finish;
+
+        _repository.Save();
+    }
+    public void RejectRequest(long tripReqId)
+    {
+        var tripReq = _repository.TripReq.Table
+            .Single(x => x.Id == tripReqId);
+
+        if (tripReq.Status != TripReqStatus.Pending)
+            throw new BadRequestException();
+
+        tripReq.Status = TripReqStatus.Reject;
     }
 }

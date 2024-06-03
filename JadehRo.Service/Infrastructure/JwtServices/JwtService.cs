@@ -2,7 +2,9 @@
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using JadehRo.Common.Utilities;
 using JadehRo.Database.Entities.Users;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 

@@ -1,4 +1,8 @@
 ﻿using JadehRo.Api.Infrastructure.ModelBinders;
+using JadehRo.Common.Utilities;
+using JadehRo.Service.Infrastructure.CustomMapping;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace JadehRo.Api.Infrastructure.Configuration;
 
@@ -25,35 +29,9 @@ public static class ConfigureServices
                     .AllowAnyHeader()
                     .AllowAnyMethod()
                     .WithOrigins(
-                        "http://janamoni.sahand-kavir.com:1086",
-                        "http://api.janamoni.sahand-kavir.com:3510",
-                        "http://109.125.147.221:4510",
-                        "http://192.168.168.111:3732",
-                        "http://m.janamoni.sk.local",
                         "http://janamoni.sk.local",
-                        "http://api.janamuni.ir", 
                         "https://localhost:4200",
                         "http://localhost:4200")
-                    .AllowCredentials();
-            });
-
-            option.AddPolicy(name: "SahandOrigins", policyBuilder =>
-            {
-                policyBuilder
-                    .AllowAnyHeader()
-                    .AllowAnyMethod()
-                    .WithOrigins(
-                        "http://janamoni.sahand-kavir.com:1086",
-                        "http://api.janamoni.sahand-kavir.com:3510",
-                        "http://192.168.168.111:3732",
-                        "http://109.125.147.221:4510",
-                        "http://janamoni.sk.local", 
-                        "http://m.janamoni.sk.local",
-                        "http://localhost:4200",
-                        "https://localhost:4200",
-                        "http://localhost:4201",
-                        "https://localhost:4201",
-                        "https://localhost:5000")
                     .AllowCredentials();
             });
 
@@ -64,12 +42,6 @@ public static class ConfigureServices
                     .AllowAnyMethod()
                     .WithOrigins(
                         "http://localhost:4200",
-                        "http://janamoni.sahand-kavir.com:1086",
-                        "http://api.janamoni.sahand-kavir.com:3510",
-                        "http://192.168.168.111:3732",
-                        "http://janamoni.sk.local",
-                        "http://m.janamoni.sk.local",
-                        "http://109.125.147.221:4510",
                         "https://localhost:4200",
                         "http://localhost:4201",
                         "https://localhost:4201")
@@ -81,7 +53,6 @@ public static class ConfigureServices
         services.AddLazyResolution();
         services.AddMemoryCache();
         services.AddSwagger(siteSettings.SwaggerSettings);
-        services.AddHangfire(configuration);
     }
 
     public static void AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration, SiteSettings siteSettings)

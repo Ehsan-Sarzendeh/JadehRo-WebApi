@@ -7,10 +7,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace JadehRo.Database.Context;
 
-public class AppDbContext(DbContextOptions<AppDbContext> options)
-    : IdentityDbContext<User, Role, long, IdentityUserClaim<long>, UserRole, IdentityUserLogin<long>, IdentityRoleClaim<long>, IdentityUserToken<long>>(options)
+public class AppDbContext : IdentityDbContext<User, Role, long, IdentityUserClaim<long>, UserRole, IdentityUserLogin<long>, IdentityRoleClaim<long>, IdentityUserToken<long>>
 {
     public bool IgnorePreSaveChange { get; set; }
+
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+    {
+
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

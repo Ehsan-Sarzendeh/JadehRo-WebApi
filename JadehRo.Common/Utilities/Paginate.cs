@@ -7,8 +7,8 @@ public class Paginate
 {
     public int Index { get; set; }
     public int Count { get; set; }
-    public string? Order { get; set; }
-    public string? Sort { get; set; }
+    public string Order { get; set; }
+    public string Sort { get; set; }
 
     public static (IQueryable<T>, int) GetPaginatedList<T>(Paginate? paginate, IQueryable<T> models)
     {

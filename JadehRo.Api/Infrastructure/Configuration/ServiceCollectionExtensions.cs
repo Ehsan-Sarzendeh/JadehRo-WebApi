@@ -1,9 +1,24 @@
 ﻿using System.Net;
 using System.Security.Claims;
 using System.Text;
+using JadehRo.Common.Exceptions;
+using JadehRo.Common.Extensions;
+using JadehRo.Common.Utilities;
+using JadehRo.Database.Context;
+using JadehRo.Database.Entities.Users;
+using JadehRo.Database.Interceptors;
+using JadehRo.Database.Repositories;
+using JadehRo.Database.Repositories.RepositoryWrapper;
+using JadehRo.Service.SmsService.Panels;
+using JadehRo.Service.SmsService.Panels.IppanelPanel;
+using JadehRo.Service.SmsService.Panels.KavenegarPanel;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -13,12 +28,17 @@ public static class ServiceCollectionExtensions
 {
     public static void AddDbContext(this IServiceCollection service, IConfiguration configuration)
     {
-        service.AddDbContext<ApplicationDbContext>((serviceProvider, options) =>
+        service.AddDbContext<AppDbContext>((serviceProvider, options) =>
         {
             options.UseSqlServer(configuration.GetConnectionString("SqlServer"));
 
             var httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
             options.AddInterceptors(new PropertyAuditSaveChangesInterceptor(httpContextAccessor));
+
+            options.ConfigureWarnings(builder =>
+            {
+                builder.Ignore(CoreEventId.PossibleIncorrectRequiredNavigationWithQueryFilterInteractionWarning);
+            });
         });
     }
 
@@ -116,7 +136,7 @@ public static class ServiceCollectionExtensions
             //Password Settings
             identityOptions.Password.RequireDigit = settings.PasswordRequireDigit;
             identityOptions.Password.RequiredLength = settings.PasswordRequiredLength;
-            identityOptions.Password.RequireNonAlphanumeric = settings.PasswordRequireNonAlphanumic; //#@!
+            identityOptions.Password.RequireNonAlphanumeric = settings.PasswordRequireNonAlphanumeric; //#@!
             identityOptions.Password.RequireUppercase = settings.PasswordRequireUppercase;
             identityOptions.Password.RequireLowercase = settings.PasswordRequireLowercase;
 
@@ -135,7 +155,7 @@ public static class ServiceCollectionExtensions
 
         })
         .AddRoles<Role>()
-        .AddEntityFrameworkStores<ApplicationDbContext>()
+        .AddEntityFrameworkStores<AppDbContext>()
         .AddDefaultTokenProviders();
 
         services.AddAuthorization(options =>
@@ -167,20 +187,19 @@ public static class ServiceCollectionExtensions
         var singletonType = typeof(ISingletonDependency);
         var transientType = typeof(ITransientDependency);
 
-        AppDomain.CurrentDomain.Load("JaNamoni.Service");
 
         var scopedTypes = AppDomain.CurrentDomain.GetAssemblies()
-            .SelectMany(s => s.GetTypes())
+            .SelectMany(s => s.GetExportedTypes())
             .Where(p => scopedType.IsAssignableFrom(p) && p.IsClass && !p.IsAbstract)
             .ToList();
 
         var singletonTypes = AppDomain.CurrentDomain.GetAssemblies()
-            .SelectMany(s => s.GetTypes())
+            .SelectMany(s => s.GetExportedTypes())
             .Where(p => singletonType.IsAssignableFrom(p) && p.IsClass && !p.IsAbstract)
             .ToList();
 
         var transientTypes = AppDomain.CurrentDomain.GetAssemblies()
-            .SelectMany(s => s.GetTypes())
+            .SelectMany(s => s.GetExportedTypes())
             .Where(p => transientType.IsAssignableFrom(p) && p.IsClass && !p.IsAbstract)
             .ToList();
 
@@ -202,16 +221,17 @@ public static class ServiceCollectionExtensions
             var iType = type.GetInterface("I" + type.Name);
             services.AddTransient(iType, type);
         }
+
         #region SMS
 
-        services.AddTransient<IppanelService>();
-        services.AddTransient<KavenegarService>();
-        services.AddTransient<Func<SmsPanelType, ISmsService>>(provider => key =>
+        services.AddTransient<IppanelPanelService>();
+        services.AddTransient<KavenegarPanelService>();
+        services.AddTransient<Func<SmsPanelType, ISmsPanelService>>(provider => key =>
         {
             return key switch
             {
-                SmsPanelType.Ippanel => provider.GetService<IppanelService>(),
-                SmsPanelType.Kavenegar => provider.GetService<KavenegarService>(),
+                SmsPanelType.Ippanel => provider.GetService<IppanelPanelService>(),
+                SmsPanelType.Kavenegar => provider.GetService<KavenegarPanelService>(),
                 _ => throw new ArgumentOutOfRangeException(nameof(key), key, null)
             };
         });
@@ -260,30 +280,6 @@ public static class ServiceCollectionExtensions
             });
 
         });
-    }
-
-    public static void AddHangfire(this IServiceCollection services, IConfiguration configuration)
-    {
-        services.AddHangfire(x =>
-        {
-            x.SetDataCompatibilityLevel(CompatibilityLevel.Version_170);
-            x.UseSimpleAssemblyNameTypeSerializer();
-            x.UseRecommendedSerializerSettings();
-            x.UseSerializerSettings(new JsonSerializerSettings()
-            {
-                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-            });
-            x.UseSqlServerStorage(configuration.GetConnectionString("HangfireDB"), new SqlServerStorageOptions
-            {
-                CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
-                SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
-                QueuePollInterval = TimeSpan.Zero,
-                UseRecommendedIsolationLevel = true,
-                DisableGlobalLocks = true // Migration to Schema 7 is required
-            });
-        });
-
-        services.AddHangfireServer();
     }
 
     public static IServiceCollection AddLazyResolution(this IServiceCollection services)

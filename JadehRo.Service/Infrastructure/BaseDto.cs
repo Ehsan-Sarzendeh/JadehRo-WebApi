@@ -9,7 +9,6 @@ public abstract class BaseDto<TDto, TEntity, TKey> : IHaveCustomMapping
     where TDto : class, new()
     where TEntity : new()
 {
-    [Display(Name = "ردیف")]
     public TKey Id { get; set; }
     public bool IsActive { get; set; } = true;
 
@@ -69,9 +68,7 @@ public abstract class BaseEmptyDto<TDto, TEntity, TKey> : IHaveCustomMapping
     where TDto : class, new()
     where TEntity : IEntity, new()
 {
-    [Display(Name = "ردیف")]
     public TKey Id { get; set; }
-
 
     public TEntity ToEntity(IMapper mapper)
     {

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using JadehRo.Common.Exceptions;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace JadehRo.Api.Infrastructure.Api;
@@ -47,7 +48,6 @@ public class ApiResultFilterAttribute : ActionFilterAttribute
             if (notFoundObjectResult.Value != null && !(notFoundObjectResult.Value is ProblemDetails))
                 message = notFoundObjectResult.Value.ToString();
 
-            //var apiResult = new ApiResult<object>(false, ApiResultStatusCode.NotFound, notFoundObjectResult.Value);
             var apiResult = new ApiResult(false, ApiResultStatusCode.NotFound, message);
             context.Result = new JsonResult(apiResult) { StatusCode = notFoundObjectResult.StatusCode };
         }

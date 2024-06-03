@@ -1,4 +1,5 @@
-﻿using JadehRo.Service.Infrastructure;
+﻿using JadehRo.Database.Entities.Users;
+using JadehRo.Service.Infrastructure;
 
 namespace JadehRo.Service.UserService.Dto;
 

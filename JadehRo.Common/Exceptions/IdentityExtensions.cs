@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using System.Security.Claims;
 using System.Security.Principal;
+using JadehRo.Common.Extensions;
 
 namespace JadehRo.Common.Exceptions;
 

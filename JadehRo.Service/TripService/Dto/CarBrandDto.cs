@@ -1,4 +1,6 @@
-﻿using JadehRo.Service.Infrastructure;
+﻿using JadehRo.Common.Extensions;
+using JadehRo.Database.Entities.Trip;
+using JadehRo.Service.Infrastructure;
 
 namespace JadehRo.Service.TripService.Dto;
 

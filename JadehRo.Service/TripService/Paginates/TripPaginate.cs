@@ -1,4 +1,8 @@
 ﻿using System.ComponentModel;
+using AutoMapper;
+using JadehRo.Common.Utilities;
+using JadehRo.Database.Entities.Trip;
+using Microsoft.EntityFrameworkCore;
 
 namespace JadehRo.Service.TripService.Paginates;
 
@@ -94,21 +98,21 @@ public class TripPaginate : Paginate
 
             count = models.Count();
 
-            if (string.IsNullOrEmpty(paginate.sort))
+            if (string.IsNullOrEmpty(paginate.Sort))
                 models = models.OrderByDescending(x => x.CreatedDateTime);
             else
             {
-                var prop = TypeDescriptor.GetProperties(typeof(Trip)).Find(paginate.sort, true);
-                models = paginate.order.ToLower() == "asc"
+                var prop = TypeDescriptor.GetProperties(typeof(Trip)).Find(paginate.Sort, true);
+                models = paginate.Order.ToLower() == "asc"
                     ? models.OrderBy(x => EF.Property<Trip>(x, prop.Name))
                     : models.OrderByDescending(x => EF.Property<Trip>(x, prop.Name));
             }
 
-            if (paginate.count != 0)
+            if (paginate.Count != 0)
             {
                 models = models
-                    .Skip(paginate.count * paginate.index)
-                    .Take(paginate.count);
+                    .Skip(paginate.Count * paginate.Index)
+                    .Take(paginate.Count);
             }
             else
             {

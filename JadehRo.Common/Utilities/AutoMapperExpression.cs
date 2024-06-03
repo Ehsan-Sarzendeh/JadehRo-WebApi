@@ -3,7 +3,6 @@ using System.Globalization;
 
 namespace JadehRo.Common.Utilities;
 
-
 public static class AutoMapperExpression
 {
     public static string ToStringDateTime(this DateTime source)

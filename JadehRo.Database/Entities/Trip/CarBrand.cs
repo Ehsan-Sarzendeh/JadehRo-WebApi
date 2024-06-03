@@ -6,7 +6,7 @@ namespace JadehRo.Database.Entities.Trip;
 public class CarBrand : BaseEntity
 {
     public CarType Type { get; set; }
-    public required string Name { get; set; }
+    public string Name { get; set; }
 }
 
 public enum CarType

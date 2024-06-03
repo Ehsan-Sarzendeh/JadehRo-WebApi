@@ -1,9 +1,13 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using JadehRo.Api.Infrastructure.Api;
+using JadehRo.Database.Entities.Trip;
+using JadehRo.Service.TripService;
+using JadehRo.Service.TripService.Dto;
+using JadehRo.Service.TripService.Paginates;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JadehRo.Api.Controllers;
 
-[Authorize]
 public class TripController : BaseController
 {
     private readonly ITripService _tripService;
@@ -34,29 +38,14 @@ public class TripController : BaseController
         return Ok();
     }
 
-    [HttpPut("Delete/{tripId:long}")]
-    public ApiResult DeleteTrip(long tripId)
+    [HttpPut("Cancel/{tripId}")]
+    public ApiResult CancelTrip(long tripId)
     {
-
-        _tripService.DeleteTrip(UserId!.Value, tripId);
+        _tripService.CancelTrip(UserId!.Value, tripId);
         return Ok();
     }
 
-    [HttpPut("Accept/{tripId:long}")]
-    public ApiResult AcceptTrip(long tripId)
-    {
-        _tripService.AcceptTrip(tripId);
-        return Ok();
-    }
-
-    [HttpPut("Reject/{tripId:long}")]
-    public ApiResult RejectTrip(long tripId)
-    {
-        _tripService.RejectTrip(tripId);
-        return Ok();
-    }
-
-    [HttpGet("{tripId:long}"), AllowAnonymous]
+    [HttpGet("{tripId}"), AllowAnonymous]
     public ApiResult<GetTripDto> GetTrip(long tripId)
     {
         var trip = _tripService.GetTrip(tripId);
@@ -74,10 +63,10 @@ public class TripController : BaseController
         };
     }
 
-    [HttpGet("Accepted"), AllowAnonymous]
-    public ApiResult<IList<GetTripListDto>> GetAcceptedTrips([FromQuery] TripPaginate paginate)
+    [HttpGet("Pending"), AllowAnonymous]
+    public ApiResult<IList<GetTripListDto>> GetPendingTrips([FromQuery] TripPaginate paginate)
     {
-        var (userDto, count) = _tripService.GetAcceptedTrips(paginate);
+        var (userDto, count) = _tripService.GetPendingTrips(paginate);
         return new ApiResult<IList<GetTripListDto>>()
         {
             TotalRecord = count,
@@ -96,10 +85,31 @@ public class TripController : BaseController
         };
     }
 
-    [HttpGet("SeenDriverInfo")]
-    public ApiResult<DriverInfo> GetTripDriverInfo(long tripId)
+    [HttpGet("SeenTrip")]
+    public ApiResult<DriverInfo> SeenTrip(long tripId)
     {
-        var res = _tripService.GetTripDriverInfo(UserId!.Value, tripId);
-        return res;
+        var res = _tripService.SeenInfo(UserId!.Value, tripId);
+        return Ok(res);
+    }
+
+    [HttpPost("SendRequest")]
+    public ApiResult SendRequest(long tripId)
+    {
+       _tripService.SendRequest(UserId!.Value, tripId);
+       return Ok();
+    }
+
+    [HttpPut("AcceptRequest")]
+    public ApiResult AcceptRequest(long tripReqId)
+    {
+        _tripService.AcceptRequest(tripReqId);
+        return Ok();
+    }
+
+    [HttpPut("RejectRequest")]
+    public ApiResult RejectRequest(long tripReqId)
+    {
+        _tripService.RejectRequest(tripReqId);
+        return Ok();
     }
 }

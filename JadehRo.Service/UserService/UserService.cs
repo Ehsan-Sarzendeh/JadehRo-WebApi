@@ -1,9 +1,16 @@
-﻿using JadehRo.Service.CommonService;
+﻿using AutoMapper;
+using JadehRo.Common.Exceptions;
+using JadehRo.Common.Utilities;
+using JadehRo.Database.Entities.Users;
+using JadehRo.Database.Repositories.RepositoryWrapper;
 using JadehRo.Service.Infrastructure.JwtServices;
-using JadehRo.Service.SendingMsgModule.Implementation;
-using JadehRo.Service.SendingMsgModule.Messaging;
+using JadehRo.Service.SmsService;
+using JadehRo.Service.SmsService.Dtos;
 using JadehRo.Service.UserService.Dto;
 using JadehRo.Service.UserService.Paginates;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace JadehRo.Service.UserService;
 
@@ -14,21 +21,19 @@ public class UserService : IUserService
     private readonly RoleManager<Role> _roleManager;
     private readonly SiteSettings _siteSetting;
     private readonly IMapper _mapper;
-    private readonly ICommonService _commonServices;
     private readonly IJwtService _jwtService;
     private readonly IRepositoryWrapper _repository;
-    private readonly ISendingMsgService _sendingMsgService;
+    private readonly ISmsService _smsService;
 
-    public UserService(IMapper mapper, IJwtService jwtService, IOptionsSnapshot<SiteSettings> siteSetting, UserManager<User> userManager, RoleManager<Role> roleManager, SignInManager<User> signInManager, ICommonService commonServices, IRepositoryWrapper repository, ISendingMsgService sendingMsgService)
+    public UserService(IMapper mapper, IJwtService jwtService, IOptionsSnapshot<SiteSettings> siteSetting, UserManager<User> userManager, RoleManager<Role> roleManager, SignInManager<User> signInManager, IRepositoryWrapper repository, ISmsService smsService)
     {
         _mapper = mapper;
         _jwtService = jwtService;
         _userManager = userManager;
         _roleManager = roleManager;
         _signInManager = signInManager;
-        _commonServices = commonServices;
         _repository = repository;
-        _sendingMsgService = sendingMsgService;
+        _smsService = smsService;
         _siteSetting = siteSetting.Value;
     }
 
@@ -266,12 +271,11 @@ public class UserService : IUserService
 
         var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
-        _sendingMsgService.SendDirectSmsInBackground(new SendingSmsRequest
+        _smsService.SendSmsInBackground(new SendingSmsRequest
         {
             To = new List<string>() { user.PhoneNumber },
             PatternId = "rsgvm39juf",
-            PatternParams = new List<string>() { "code" },
-            PatternParamsKaveh = new List<string>() { "token" },
+            PatternParams = new List<string> { "token" },
             PatternValues = new List<string>() { token }
         });
 
@@ -342,12 +346,11 @@ public class UserService : IUserService
 
         var code = GenerateVerifyCode();
 
-        _sendingMsgService.SendDirectSmsInBackground(new SendingSmsRequest
+        _smsService.SendSmsInBackground(new SendingSmsRequest
         {
             To = new List<string>() { phoneNumber },
             PatternId = "rsgvm39juf",
-            PatternParams = new List<string>() { "code" },
-            PatternParamsKaveh = new List<string>() { "token" },
+            PatternParams = new List<string>() { "token" },
             PatternValues = new List<string>() { code.ToString() }
         });
 

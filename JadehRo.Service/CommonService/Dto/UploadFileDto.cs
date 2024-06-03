@@ -1,4 +1,6 @@
-﻿namespace JadehRo.Service.CommonService.Dto;
+﻿using Microsoft.AspNetCore.Http;
+
+namespace JadehRo.Service.CommonService.Dto;
 
 public class UploadFileDto
 {

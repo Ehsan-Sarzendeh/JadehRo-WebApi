@@ -7,8 +7,8 @@ namespace JadehRo.Database.Entities.Users;
 public class UserRole : IdentityUserRole<long>, IEntity
 {
     [ForeignKey("UserId")]
-    public virtual required User User { get; set; }
+    public virtual User User { get; set; }
 
     [ForeignKey("RoleId")]
-    public virtual required Role Role { get; set; }
+    public virtual Role Role { get; set; }
 }

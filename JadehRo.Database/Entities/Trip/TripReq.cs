@@ -13,13 +13,13 @@ public class TripReq : BaseEntity
     public DateTime? AcceptOrRejectDateTime { get; set; }
 
     [StringLength(1000)]
-    public string? ReqDescription { get; set; }
+    public string ReqDescription { get; set; }
 
-    public required long TripId { get; set; }
-    public required Trip Trip { get; set; }
+    public long TripId { get; set; }
+    public Trip Trip { get; set; }
 
-    public required long UserId { get; set; }
-    public required User User { get; set; }
+    public long UserId { get; set; }
+    public User User { get; set; }
 }
 
 public enum TripReqStatus

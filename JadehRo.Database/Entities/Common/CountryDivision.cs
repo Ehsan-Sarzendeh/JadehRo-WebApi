@@ -7,12 +7,12 @@ public class CountryDivision : BaseEntity
 {
     [Required]
     [MaxLength(100)]
-    public required string Name { get; set; }
+    public string Name { get; set; }
     public double? Latitude { get; set; }
     public double? Longitude { get; set; }
 
     public long? ParentId { get; set; }
-    public CountryDivision? Parent { get; set; }
+    public CountryDivision Parent { get; set; }
 
-    public ICollection<CountryDivision>? Children { get; set; }
+    public ICollection<CountryDivision> Children { get; set; }
 }

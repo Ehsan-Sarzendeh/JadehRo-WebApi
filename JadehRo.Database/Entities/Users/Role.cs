@@ -7,6 +7,6 @@ namespace JadehRo.Database.Entities.Users;
 public class Role : IdentityRole<long>, IEntity
 {
     [StringLength(100)]
-    public string? Description { get; set; }
-    public virtual required ICollection<UserRole> UserRoles { get; set; }
+    public string Description { get; set; }
+    public virtual ICollection<UserRole> UserRoles { get; set; }
 }
