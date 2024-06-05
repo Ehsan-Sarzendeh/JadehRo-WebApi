@@ -8,12 +8,19 @@ public class TripReq : BaseEntity
 {
     public TripReqStatus Status { get; set; }
 
-    public DateTime SeenDateTime { get; set; }
-    public DateTime? ReqDateTime { get; set; }
+    public DateTime ReqDateTime { get; set; }
     public DateTime? AcceptOrRejectDateTime { get; set; }
 
     [StringLength(1000)]
+    public string Address { get; set; }
+
+	[StringLength(1000)]
     public string ReqDescription { get; set; }
+
+    [StringLength(1000)]
+    public string AcceptOrRejectDescription { get; set; }
+
+	public int PersonCount { get; set; }
 
     public long TripId { get; set; }
     public Trip Trip { get; set; }
@@ -24,8 +31,8 @@ public class TripReq : BaseEntity
 
 public enum TripReqStatus
 {
-    Seen = 0,
     Pending = 1,
     Accept = 2,
-    Reject = 3
+    Reject = 3,
+    Cancel = 4
 }

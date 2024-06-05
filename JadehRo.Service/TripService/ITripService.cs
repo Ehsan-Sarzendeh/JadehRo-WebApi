@@ -11,15 +11,18 @@ public interface ITripService : IScopedDependency
 
     public void AddTrip(AddTripDto dto);
     public void EditTrip(EditTripDto dto);
-    public void CancelTrip(long userId, long tripId);
+    public void FinishTrip(long userId, long tripId);
+	public void CancelTrip(long userId, long tripId);
 
     public (IList<GetTripListDto>, int) GetAllTrips(TripPaginate paginate);
     public (IList<GetTripListDto>, int) GetPendingTrips(TripPaginate paginate);
     public (IList<GetTripListDto>, int) GetDriverTrips(long driverId, TripPaginate paginate);
     public GetTripDto GetTrip(long tripId);
 
-    public DriverInfo SeenInfo(long userId, long tripId);
-    public void SendRequest(long userId, long tripId);
-    public void AcceptRequest(long tripReqId);
-    public void RejectRequest(long tripReqId);
+    public (IList<GetTripReqDto>, int) GetTripRequests(long tripId, TripReqPaginate paginate);
+    public (IList<GetTripReqDto>, int) GetPassengerRequests(long passengerId, TripReqPaginate paginate);
+	public void SendRequest(long userId, AddTripReqDto dto);
+    public void AcceptRequest(AcceptOrRejectTripReqDto dto);
+    public void RejectRequest(AcceptOrRejectTripReqDto dto);
+    public void CancelRequest(long tripReqId);
 }

@@ -6,7 +6,6 @@ namespace JadehRo.Service.UserService.Dto;
 
 public class RegisterDto
 {
-
     [Required]
     public int VerifyCode { get; set; }
 

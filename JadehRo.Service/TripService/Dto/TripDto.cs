@@ -13,7 +13,7 @@ public class AddTripDto : BaseDto<AddTripDto, Trip>
     [MaxLength(1000)]
     public string Description { get; set; }
 
-    public int CarModel { get; set; }
+	public int CarModel { get; set; }
 
     public long CarBrandId { get; set; }
 
@@ -42,13 +42,17 @@ public class EditTripDto : BaseDto<EditTripDto, Trip>
 
 public class GetTripListDto : BaseDto<GetTripListDto, Trip>
 {
-    public MoneyType MoneyType { get; set; }
+	public TripStatus Status { get; set; }
+
+	public MoneyType MoneyType { get; set; }
     public string MoveDateTime { get; set; }
 
     [MaxLength(1000)]
     public string Description { get; set; }
 
-    public int Capacity { get; set; }
+    public bool IsNewReq { get; set; }
+
+	public int Capacity { get; set; }
     public int FillCapacity { get; set; }
     public int RemainingCapacity { get; set; }
 
@@ -68,7 +72,9 @@ public class GetTripListDto : BaseDto<GetTripListDto, Trip>
 
 public class GetTripDto : BaseDto<GetTripDto, Trip>
 {
-    public MoneyType MoneyType { get; set; }
+	public TripStatus Status { get; set; }
+
+	public MoneyType MoneyType { get; set; }
     public string MoveDateTime { get; set; }
 
     [MaxLength(1000)]
@@ -76,7 +82,9 @@ public class GetTripDto : BaseDto<GetTripDto, Trip>
 
     public int CarModel { get; set; }
 
-    public int Capacity { get; set; }
+    public bool IsNewReq { get; set; }
+
+	public int Capacity { get; set; }
     public int FillCapacity { get; set; }
     public int RemainingCapacity { get; set; }
 

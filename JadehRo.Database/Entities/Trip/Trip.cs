@@ -25,6 +25,8 @@ public class Trip : BaseAuditableEntity
     [StringLength(1000)]
     public string Description { get; set; }
 
+    public bool HaveNewReq { get; set; }
+
     public long CarBrandId { get; set; }
     public CarBrand CarBrand { get; set; }
 

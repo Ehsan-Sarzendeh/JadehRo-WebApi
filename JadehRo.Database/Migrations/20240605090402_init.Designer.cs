@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JadehRo.Database.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240603202125_Init")]
-    partial class Init
+    [Migration("20240605090402_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -192,6 +192,9 @@ namespace JadehRo.Database.Migrations
                     b.Property<int>("FillCapacity")
                         .HasColumnType("int");
 
+                    b.Property<bool>("HaveNewReq")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime>("ModifiedDateTime")
                         .HasColumnType("datetime2");
 
@@ -239,15 +242,23 @@ namespace JadehRo.Database.Migrations
                     b.Property<DateTime?>("AcceptOrRejectDateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("ReqDateTime")
+                    b.Property<string>("AcceptOrRejectDescription")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("Address")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<int>("PersonCount")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ReqDateTime")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("ReqDescription")
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
-
-                    b.Property<DateTime>("SeenDateTime")
-                        .HasColumnType("datetime2");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace JadehRo.Database.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -274,6 +274,7 @@ namespace JadehRo.Database.Migrations
                     MoneyType = table.Column<int>(type: "int", nullable: false),
                     Money = table.Column<int>(type: "int", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    HaveNewReq = table.Column<bool>(type: "bit", nullable: false),
                     CarBrandId = table.Column<long>(type: "bigint", nullable: false),
                     SourceId = table.Column<long>(type: "bigint", nullable: false),
                     DestinationId = table.Column<long>(type: "bigint", nullable: false),
@@ -325,10 +326,12 @@ namespace JadehRo.Database.Migrations
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Status = table.Column<int>(type: "int", nullable: false),
-                    SeenDateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ReqDateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ReqDateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     AcceptOrRejectDateTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Address = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
                     ReqDescription = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    AcceptOrRejectDescription = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    PersonCount = table.Column<int>(type: "int", nullable: false),
                     TripId = table.Column<long>(type: "bigint", nullable: false),
                     UserId = table.Column<long>(type: "bigint", nullable: false)
                 },
