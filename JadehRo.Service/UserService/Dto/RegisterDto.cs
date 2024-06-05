@@ -15,5 +15,8 @@ public class RegisterDto
     [Required, ValidIranianNationalCode]
     public string NationalCode { get; set; }
 
-    public UserType UserType { get; set; }
+    [Required]
+    public string FullName { get; set; }
+
+	public UserType UserType { get; set; }
 }

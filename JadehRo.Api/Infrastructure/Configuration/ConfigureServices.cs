@@ -29,7 +29,6 @@ public static class ConfigureServices
                     .AllowAnyHeader()
                     .AllowAnyMethod()
                     .WithOrigins(
-                        "http://janamoni.sk.local",
                         "https://localhost:4200",
                         "http://localhost:4200")
                     .AllowCredentials();

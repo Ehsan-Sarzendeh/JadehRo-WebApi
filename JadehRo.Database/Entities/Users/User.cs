@@ -18,7 +18,6 @@ public class User : IdentityUser<long>, IEntity, ISoftDelete
 
     public bool IsSuspended { get; set; }
 
-    [StringLength(10)]
     public string RefreshToken { get; set; }
     public DateTime RefreshTokenExpiryTime { get; set; }
 

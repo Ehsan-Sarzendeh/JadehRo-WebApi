@@ -48,7 +48,7 @@ public class UserService : IUserService
         if (dto.UserType != UserType.Passenger && dto.UserType != UserType.Driver)
             throw new BadRequestException("درخواست نامعتبر");
 
-        VerifyCode(dto.VerifyCode, dto.PhoneNumber, 120);
+        // VerifyCode(dto.VerifyCode, dto.PhoneNumber, 120);
 
         var user = await _userManager.FindByNameAsync(dto.PhoneNumber);
 
@@ -60,6 +60,7 @@ public class UserService : IUserService
             UserName = dto.PhoneNumber,
             PhoneNumber = dto.PhoneNumber,
             NationalCode = dto.NationalCode,
+            FullName = dto.FullName,
             PhoneNumberConfirmed = true,
             Type = dto.UserType,
             IsActive = true,
