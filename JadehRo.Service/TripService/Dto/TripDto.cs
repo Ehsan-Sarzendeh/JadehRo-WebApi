@@ -8,7 +8,8 @@ public class AddTripDto : BaseDto<AddTripDto, Trip>
 {
     public int Capacity { get; set; }
     public MoneyType MoneyType { get; set; }
-    public string MoveDateTime { get; set; }
+    public int? Money { get; set; }
+	public string MoveDateTime { get; set; }
 
     [MaxLength(1000)]
     public string Description { get; set; }
@@ -26,7 +27,8 @@ public class EditTripDto : BaseDto<EditTripDto, Trip>
 {
     public int Capacity { get; set; }
     public MoneyType MoneyType { get; set; }
-    public string MoveDateTime { get; set; }
+    public int? Money { get; set; }
+	public string MoveDateTime { get; set; }
 
     [MaxLength(1000)]
     public string Description { get; set; }
@@ -45,7 +47,8 @@ public class GetTripListDto : BaseDto<GetTripListDto, Trip>
 	public TripStatus Status { get; set; }
 
 	public MoneyType MoneyType { get; set; }
-    public string MoveDateTime { get; set; }
+	public int? Money { get; set; }
+	public string MoveDateTime { get; set; }
 
     [MaxLength(1000)]
     public string Description { get; set; }
@@ -75,7 +78,8 @@ public class GetTripDto : BaseDto<GetTripDto, Trip>
 	public TripStatus Status { get; set; }
 
 	public MoneyType MoneyType { get; set; }
-    public string MoveDateTime { get; set; }
+	public int? Money { get; set; }
+	public string MoveDateTime { get; set; }
 
     [MaxLength(1000)]
     public string Description { get; set; }

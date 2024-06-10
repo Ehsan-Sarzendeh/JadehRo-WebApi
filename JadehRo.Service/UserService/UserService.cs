@@ -90,7 +90,7 @@ public class UserService : IUserService
 
         if (string.IsNullOrEmpty(dto.Password))
         {
-            VerifyCode(dto.VerifyCode, dto.UserName, 200);
+            // VerifyCode(dto.VerifyCode, dto.UserName, 200);
         }
         else
         {

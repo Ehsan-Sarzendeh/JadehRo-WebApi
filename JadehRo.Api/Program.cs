@@ -1,4 +1,5 @@
 using JadehRo.Api.Infrastructure.Configuration;
+using JadehRo.Api.Infrastructure.Middleware;
 using JadehRo.Api.Infrastructure.Pipeline;
 using JadehRo.Common.Utilities;
 using NLog;
@@ -24,7 +25,9 @@ try
     var app = builder.Build();
     var env = app.Environment;
 
-    if (env.IsDevelopment())
+    app.UseCustomExceptionHandler();
+
+	if (env.IsDevelopment())
         app.UseCors("DevelopedOrigins");
 
     if (env.IsProduction())

@@ -13,6 +13,7 @@ public class GetTripReqDto : BaseDto<GetTripReqDto, TripReq>
 
 	public int PersonCount { get; set; }
 
+	public string Address { get; set; }
 	public string ReqDescription { get; set; }
 	public string AcceptOrRejectDescription { get; set; }
 
