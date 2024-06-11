@@ -81,40 +81,31 @@ public class TripService : ITripService
 	public (IList<GetTripListDto>, int) GetAllTrips(TripPaginate paginate)
     {
         var trips = _repository.Trip.TableNoTracking
-            .Include(x => x.Source)
-            .Include(x => x.Destination)
-            .Include(x => x.CarBrand)
             .AsQueryable();
 
         (trips, var count) = TripPaginate.GetPaginatedList(paginate, trips, _mapper);
 
-        var result = GetTripListDto.FromEntities(_mapper, trips.ToList());
+        var result = GetTripListDto.FromEntities(_mapper, trips);
         return (result, count);
     }
     public (IList<GetTripListDto>, int) GetPendingTrips(TripPaginate paginate)
     {
         var trips = _repository.Trip.TableNoTracking
-            .Include(x => x.Source)
-            .Include(x => x.Destination)
-            .Include(x => x.CarBrand)
             .Where(x => x.Status == TripStatus.Pending && x.MoveDateTime.Date >= DateTime.Now.Date);
 
         (trips, var count) = TripPaginate.GetPaginatedList(paginate, trips, _mapper);
 
-        var result = GetTripListDto.FromEntities(_mapper, trips.ToList());
+        var result = GetTripListDto.FromEntities(_mapper, trips);
         return (result, count);
     }
     public (IList<GetTripListDto>, int) GetDriverTrips(long driverId, TripPaginate paginate)
     {
         var trips = _repository.Trip.TableNoTracking
-            .Include(x => x.Source)
-            .Include(x => x.Destination)
-            .Include(x => x.CarBrand)
             .Where(x => x.CreatedUserId == driverId);
 
         (trips, var count) = TripPaginate.GetPaginatedList(paginate, trips, _mapper);
 
-        var result = GetTripListDto.FromEntities(_mapper, trips.ToList());
+        var result = GetTripListDto.FromEntities(_mapper, trips);
         return (result, count);
     }
 
@@ -122,6 +113,7 @@ public class TripService : ITripService
 	{
 		var trip = _repository.Trip.Table
 			.Single(x => x.Id == tripId);
+
 		trip.HaveNewReq = false;
         _repository.Save();
 
@@ -130,7 +122,7 @@ public class TripService : ITripService
 
 		(trips, var count) = TripReqPaginate.GetPaginatedList(paginate, trips);
 
-	    var result = GetTripReqDto.FromEntities(_mapper, trips.ToList());
+	    var result = GetTripReqDto.FromEntities(_mapper, trips);
 	    return (result, count);
     }
 	public (IList<GetTripReqDto>, int) GetPassengerRequests(long passengerId, TripReqPaginate paginate)
@@ -140,7 +132,7 @@ public class TripService : ITripService
 
 		(trips, var count) = TripReqPaginate.GetPaginatedList(paginate, trips);
 
-		var result = GetTripReqDto.FromEntities(_mapper, trips.ToList());
+		var result = GetTripReqDto.FromEntities(_mapper, trips);
 		return (result, count);
 	}
 	public void SendRequest(long userId, AddTripReqDto dto)

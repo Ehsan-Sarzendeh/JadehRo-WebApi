@@ -25,7 +25,11 @@ public abstract class BaseDto<TDto, TEntity, TKey> : IHaveCustomMapping
         return mapper.Map(CastToDerivedClass(mapper, this), entity);
     }
 
-    public static IList<TDto> FromEntities(IMapper mapper, IList<TEntity> model)
+    public static IList<TDto> FromEntities(IMapper mapper, IQueryable<TEntity> model)
+    {
+	    return mapper.ProjectTo<TDto>(model).ToList();
+    }
+	public static IList<TDto> FromEntities(IMapper mapper, IList<TEntity> model)
     {
         return mapper.Map<IList<TDto>>(model);
     }
