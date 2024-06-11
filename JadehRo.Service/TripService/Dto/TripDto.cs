@@ -53,7 +53,7 @@ public class GetTripListDto : BaseDto<GetTripListDto, Trip>
     [MaxLength(1000)]
     public string Description { get; set; }
 
-    public bool IsNewReq { get; set; }
+    public bool HaveNewReq { get; set; }
 
 	public int Capacity { get; set; }
     public int FillCapacity { get; set; }
@@ -86,7 +86,7 @@ public class GetTripDto : BaseDto<GetTripDto, Trip>
 
     public int CarModel { get; set; }
 
-    public bool IsNewReq { get; set; }
+    public bool HaveNewReq { get; set; }
 
 	public int Capacity { get; set; }
     public int FillCapacity { get; set; }
