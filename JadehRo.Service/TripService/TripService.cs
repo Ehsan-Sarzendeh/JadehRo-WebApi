@@ -155,6 +155,9 @@ public class TripService : ITripService
 	        UserId = userId,
 	        ReqDateTime = DateTime.Now,
 	        Status = TripReqStatus.Pending,
+            Address = dto.Address,
+            ReqDescription = dto.ReqDescription,
+            PersonCount = dto.PersonCount
         };
 
         trip.HaveNewReq = true;
