@@ -143,7 +143,10 @@ public class TripService : ITripService
         if (trip.Status != TripStatus.Pending)
             throw new BadRequestException("ظرفیت سفر تکمیل شده است");
 
-        var existReq = _repository.TripReq.Table
+        if (trip.RemainingCapacity < dto.PersonCount)
+	        throw new BadRequestException("ظرفیت سفر برای تعداد درخواستی کافی نمی باشد");
+
+		var existReq = _repository.TripReq.Table
             .SingleOrDefault(x => x.UserId == userId && x.TripId == dto.TripId);
 
         if (existReq != null)
@@ -175,11 +178,11 @@ public class TripService : ITripService
         if (tripReq.Status != TripReqStatus.Pending)
             throw new BadRequestException();
 
-        var acceptCount = _repository.TripReq.TableNoTracking
-            .Count(x => x.TripId == tripReq.TripId && x.Status == TripReqStatus.Accept);
+        if (tripReq.Trip.Status != TripStatus.Pending)
+	        throw new BadRequestException();
 
-        if (tripReq.Trip.Capacity == acceptCount)
-            throw new AppException("ظرفیت سفر به اتمام رسیده است");
+		if (tripReq.Trip.RemainingCapacity < tripReq.PersonCount)
+            throw new BadRequestException("ظرفیت سفر برای تایید این درخواست کافی نمی باشد");
 
         tripReq.Status = TripReqStatus.Accept;
         tripReq.AcceptOrRejectDateTime = DateTime.Now;
@@ -187,10 +190,22 @@ public class TripService : ITripService
 
 		tripReq.Trip.FillCapacity += tripReq.PersonCount;
 
-        if (tripReq.Trip.RemainingCapacity == 0)
-            tripReq.Trip.Status = TripStatus.Finish;
+		if (tripReq.Trip.RemainingCapacity == 0)
+		{
+			tripReq.Trip.Status = TripStatus.Finish;
 
-        _repository.Save();
+			var otherTripRequests = _repository.TripReq.Table
+				.Where(x => x.TripId == tripReq.TripId && x.Status == TripReqStatus.Pending && x.Id != tripReq.Id)
+				.ToList();
+
+			foreach (var otherTripRequest in otherTripRequests)
+			{
+				otherTripRequest.Status = TripReqStatus.Reject;
+				otherTripRequest.AcceptOrRejectDescription = "اتمام ظرفیت";
+			}
+		}
+
+		_repository.Save();
     }
     public void RejectRequest(AcceptOrRejectTripReqDto dto)
     {
