@@ -13,13 +13,21 @@ public class GetTripReqDto : BaseDto<GetTripReqDto, TripReq>
 
 	public int PersonCount { get; set; }
 
-	public string Address { get; set; }
-	public string ReqDescription { get; set; }
+    public string SourcePath { get; set; }
+    public double SourceLatitude { get; set; }
+    public double SourceLongitude { get; set; }
+
+    public string DestinationPath { get; set; }
+    public double DestinationLatitude { get; set; }
+    public double DestinationLongitude { get; set; }
+
+    public string ReqDescription { get; set; }
 	public string AcceptOrRejectDescription { get; set; }
 
 	public string UserFullName { get; set; }
+    public string UserPhoneNumber { get; set; }
 
-	public GetTripListDto Trip { get; set; }
+    public GetTripListDto Trip { get; set; }
 }
 
 public class AddTripReqDto
@@ -28,10 +36,17 @@ public class AddTripReqDto
 
 	public int PersonCount { get; set; }
 
-	[StringLength(1000)]
-	public string Address { get; set; }
+    [StringLength(1000)]
+    public string SourcePath { get; set; }
+    public double SourceLatitude { get; set; }
+    public double SourceLongitude { get; set; }
 
-	[StringLength(1000)]
+    [StringLength(1000)]
+    public string DestinationPath { get; set; }
+    public double DestinationLatitude { get; set; }
+    public double DestinationLongitude { get; set; }
+
+    [StringLength(1000)]
 	public string ReqDescription { get; set; }
 }
 

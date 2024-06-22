@@ -67,7 +67,7 @@ public class UserService : IUserService
             LastLoginDate = DateTime.Now,
             RefreshToken = _jwtService.GenerateRefreshToken(),
             RefreshTokenExpiryTime = DateTime.Now.AddMinutes(_siteSetting.JwtSettings.ExpirationMinutes + _siteSetting.JwtSettings.RefreshTokenExpiryMinutes)
-    };
+        };
         var resultAddUser = await _userManager.CreateAsync(newUser);
 
         if (!resultAddUser.Succeeded)

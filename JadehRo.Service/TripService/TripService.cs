@@ -42,7 +42,13 @@ public class TripService : ITripService
     }
     public void EditTrip(EditTripDto dto)
     {
-        var trip = _repository.Trip.Table.Single(x => x.Id == dto.Id);
+        var trip = _repository.Trip.Table
+            .Include(x => x.Requests)
+            .Single(x => x.Id == dto.Id);
+
+        if (trip.Requests.Any())
+            throw new BadRequestException("امکان ویرایش سفر به علت داشتن درخواست وجود ندارد");
+
         dto.ToEntity(_mapper, trip);
         _repository.Trip.Update(trip, true);
     }
@@ -120,7 +126,7 @@ public class TripService : ITripService
 	    var trips = _repository.TripReq.TableNoTracking
 		    .Where(x => x.TripId == tripId);
 
-		(trips, var count) = TripReqPaginate.GetPaginatedList(paginate, trips);
+        (trips, var count) = TripReqPaginate.GetPaginatedList(paginate, trips);
 
 	    var result = GetTripReqDto.FromEntities(_mapper, trips);
 	    return (result, count);
@@ -158,7 +164,12 @@ public class TripService : ITripService
 	        UserId = userId,
 	        ReqDateTime = DateTime.Now,
 	        Status = TripReqStatus.Pending,
-            Address = dto.Address,
+            SourcePath = dto.SourcePath,
+            SourceLatitude = dto.SourceLatitude,
+            SourceLongitude = dto.SourceLongitude,
+            DestinationPath = dto.DestinationPath,
+            DestinationLatitude = dto.DestinationLatitude,
+            DestinationLongitude = dto.DestinationLongitude,
             ReqDescription = dto.ReqDescription,
             PersonCount = dto.PersonCount
         };

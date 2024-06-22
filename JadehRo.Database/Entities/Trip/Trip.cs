@@ -35,6 +35,8 @@ public class Trip : BaseAuditableEntity
 
     public long DestinationId { get; set; }
     public CountryDivision Destination { get; set; }
+
+    public ICollection<TripReq> Requests { get; set; }
 }
 
 public enum MoneyType

@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using JadehRo.Database.Entities.Trip;
 using JadehRo.Service.Infrastructure;
+using Newtonsoft.Json;
 
 namespace JadehRo.Service.TripService.Dto;
 
@@ -71,6 +72,12 @@ public class GetTripListDto : BaseDto<GetTripListDto, Trip>
     public string DestinationName { get; set; }
 
     public string CreatedDateTime { get; set; }
+
+    [JsonProperty("DriverName")]
+    public string CreatedUserFullName { get; set; }
+
+    [JsonProperty("DriverPhoneNumber")]
+    public string CreatedUserPhoneNumber { get; set; }
 }
 
 public class GetTripDto : BaseDto<GetTripDto, Trip>
@@ -92,7 +99,6 @@ public class GetTripDto : BaseDto<GetTripDto, Trip>
     public int FillCapacity { get; set; }
     public int RemainingCapacity { get; set; }
 
-
     public long CarBrandId { get; set; }
     public string CarBrandName { get; set; }
 
@@ -103,4 +109,10 @@ public class GetTripDto : BaseDto<GetTripDto, Trip>
     public string DestinationName { get; set; }
 
     public string CreatedDateTime { get; set; }
+
+    [JsonProperty("DriverName")]
+    public string CreatedUserFullName { get; set; }
+
+    [JsonProperty("DriverPhoneNumber")]
+    public string CreatedUserPhoneNumber { get; set; }
 }

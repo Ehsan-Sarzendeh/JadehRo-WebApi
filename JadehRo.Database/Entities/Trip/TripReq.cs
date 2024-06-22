@@ -12,9 +12,16 @@ public class TripReq : BaseEntity
     public DateTime? AcceptOrRejectDateTime { get; set; }
 
     [StringLength(1000)]
-    public string Address { get; set; }
+    public string SourcePath { get; set; }
+    public double SourceLatitude { get; set; }
+    public double SourceLongitude { get; set; }
 
-	[StringLength(1000)]
+    [StringLength(1000)]
+    public string DestinationPath { get; set; }
+    public double DestinationLatitude { get; set; }
+    public double DestinationLongitude { get; set; }
+
+    [StringLength(1000)]
     public string ReqDescription { get; set; }
 
     [StringLength(1000)]
